@@ -19,8 +19,11 @@ Route::get('/', function () {
 
 Auth::routes();
 
+//  rutas para los tickets
+Route::post('/ticket', 'TicketController@create')->name('ticket-create');
+Route::post('/ticket/load-file', 'TicketController@uploadFile')->name('upload-file');
+
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('ticket', 'HomeController@create')->name('ticket-create');
 Route::get('/ticket/new', 'HomeController@new')->name('new-ticket');
 Route::get('/ticket/index', 'HomeController@list')->name('index-ticket');
 Route::get('/ticket/show/{ticket}', 'HomeController@show')->name('show-ticket');

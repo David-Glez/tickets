@@ -68,6 +68,17 @@
     <ul class="list-group">
       <li class="list-group-item"><p>{!!$ticket->description!!}</p></li>
     </ul>
+    <form method = 'POST' action = "{{route('upload-file')}}" enctype="multipart/form-data">
+      @csrf
+      <h5>Añadir archivo </h5>
+      <!--  aqui va el id del ticket  -->
+      <input type = 'hidden' name = 'id_ticket' id = 'id_ticket' value = "{{$ticket->id}}" />
+      <!--  aqui va el id del usuario -->
+      <input type = 'hidden' name = 'id_usuario' id = 'id_usuario' value = "{{$ticket->user->id}}" />
+      <input type = 'file' name = 'archivo_cargar' id = 'archivo_cargar' class = 'input' />
+
+      <button type = 'submit' name = 'enviar' id = 'enviar'>Enviar archivo </button>
+    </form>
 </div>
 
 </div>

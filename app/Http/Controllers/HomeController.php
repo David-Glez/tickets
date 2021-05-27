@@ -120,6 +120,8 @@ class HomeController extends Controller
       $ticket->description = $request->get('description');
       $ticket->save();
 
+      //  TODO: send email when ticket is created
+
       return redirect()->route('home')->withFlash('Tu ticket ha sido enviado');
 
     }
