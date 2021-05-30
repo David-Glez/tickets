@@ -16,11 +16,13 @@ class CreateTicketsTable extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('titulo');
-            $table->unsignedInteger('user_id');
+            //  $table->unsignedInteger('user_id');
             $table->unsignedInteger('status_id')->nullable();
             $table->unsignedInteger('priority_id')->nullable();
             $table->unsignedInteger('category_id')->nullable();
+            $table->unsignedInteger('project')->nullable();
             $table->text('description')->nullable();
+            $table->date('date_expired')->nullable();
             $table->timestamps();
         });
     }

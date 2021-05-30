@@ -11,6 +11,10 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    public function tickets(){
+        return $this->hasMany(User_Ticket::class, 'user_id');
+    }
+
     public function role(){
 
       return $this->belongsTo(Role::class, 'role_id');

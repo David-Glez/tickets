@@ -2,9 +2,6 @@
 
 @section('content')
 
-@if(session()->has('flash'))
-<div class="alert alert-success">{{session('flash')}}</div>
-@endif
 
 <div class = 'flex flex-col'>
   <div class="flex flex-1 flex-col md:flex-row lg:flex-row mx-2">

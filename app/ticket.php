@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
-  public function user(){
+  /*public function user(){
 
     return $this->belongsTo(User::class, 'user_id');
 
+  }*/
+
+  public function users(){
+    return $this->hasMany(User_Ticket::class, 'ticket_id');
   }
+
   public function priority(){
 
     return $this->belongsTo(Priority::class, 'priority_id');
