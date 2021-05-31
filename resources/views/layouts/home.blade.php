@@ -17,6 +17,9 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{!! asset('dist/css/styles.css')!!}">
     <link rel="stylesheet" href="{!! asset('dist/css/all.css')!!}">
+    <script src="{!! asset('dist/js/jquery-3.3.1.min.js')!!}"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+      <script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script>
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i,700,700i" rel="stylesheet">
     <title>Inicio || Sistema de tickets</title>
 </head>
@@ -43,6 +46,16 @@
             </div>
             
             @endif
+            @if ( $errors->count() > 0 )
+                @foreach( $errors->all() as $message )
+                <div class="bg-orange-300 mb-2 border border-orange-300 text-orange-dark px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Error!</strong>
+                    <span class="block sm:inline">{{$message}}</span>
+                    
+                </div>
+                @endforeach
+            
+            @endif
                 @yield('content')
             </main>
             <!--/Main-->
@@ -57,6 +70,7 @@
 
 </div>
 <script src="{!! asset('dist/js/main.js')!!}"></script>
+
 </body>
 
 </html>

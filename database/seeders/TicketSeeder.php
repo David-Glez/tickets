@@ -20,6 +20,8 @@ class TicketSeeder extends Seeder
             'status_id' => '1',
             'priority_id' => '1',
             'category_id' => '2',
+            'project' => 1,
+            'date_expired' => Now(),
             'description' => 'Problema con...'
         ]);
 
@@ -28,6 +30,8 @@ class TicketSeeder extends Seeder
             'status_id' => '2',
             'priority_id' => '2',
             'category_id' => '3',
+            'project' => 1,
+            'date_expired' => Now(),
             'description' => 'Problema con...'
         ]);
 
@@ -36,6 +40,8 @@ class TicketSeeder extends Seeder
             'status_id' => '3',
             'priority_id' => '3',
             'category_id' => '3',
+            'project' => 1,
+            'date_expired' => Now(),
             'description' => 'Problema con...'
         ]);
     }

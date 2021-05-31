@@ -12,7 +12,7 @@ class User extends Authenticatable
     use Notifiable;
 
     public function tickets(){
-        return $this->hasMany(User_Ticket::class, 'user_id');
+        return $this->hasMany(User_Ticket::class, 'user_id', 'id');
     }
 
     public function role(){

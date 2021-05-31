@@ -27,14 +27,13 @@
                     <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label class="block uppercase tracking-wide text-gray-700 text-xs font-light mb-1"
                                 for="grid-first-name">
-                            Usuario
+                            Usuario(s) asignados
                         </label>
-                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white-500"
-                                id="grid-first-name" 
-                                type="text"
-                                value="{{$ticket->user->name}}"
-                                readonly>
-            
+                        <ul>
+                            @foreach($user_tickets as $list)
+                            <li>{{$list["name"]}}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
                 <div class="flex flex-wrap -mx-3 mb-6">
@@ -90,6 +89,31 @@
                                 type="file"
                                 name = 'evidencia'
                                 placeholder="Titulo">
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-light mb-1"
+                                for="grid-first-name">
+                            Fecha de entrega
+                        </label>
+                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white-500"
+                                id="grid-first-name" 
+                                type="text"
+                                value="{{$ticket->date_expired}}"
+                                readonly>
+                    </div>
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-light mb-1"
+                                for="grid-first-name">
+                            Proyecto
+                        </label>
+                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white-500"
+                                id="grid-first-name" 
+                                type="text"
+                                value="{{$ticket->projects->empresa}}"
+                                readonly>
+            
                     </div>
                 </div>
                 <div class="flex flex-wrap -mx-3 mb-6">

@@ -11,6 +11,14 @@ class Ticket extends Model
     return $this->belongsTo(User::class, 'user_id');
 
   }*/
+  protected $primaryKey = 'id';
+  protected $fillable = [
+    'titulo', 'status_id', 'priority_id', 'project', 'description', 'date_expired'
+  ];
+
+  public function projects(){
+    return $this->hasOne(Projects::class, 'id', 'project');
+  }
 
   public function users(){
     return $this->hasMany(User_Ticket::class, 'ticket_id');

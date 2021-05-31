@@ -35,7 +35,7 @@
                 <a href="{{route('show-ticket', $ticket)}}" class="btn btn-xs btn-info">
                   <img src="/icons/v.png" width="10" height="10"> Ver </img>
                 </a>
-                @if($ticket->status_id < 3 && $ticket->user->id == auth()->id())
+                @if($ticket->status_id < 3 )
                 
                 <form method="POST" action="{{route('ticket-delet', $ticket)}}" style="display: inline">
                   {{csrf_field()}} {{method_field('DELETE')}}

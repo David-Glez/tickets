@@ -22,17 +22,20 @@ Route::get('/', function () {
 Auth::routes();
 
 //  rutas para los tickets
+Route::get('/ticket/new', 'TicketController@new')->name('new-ticket');
 Route::post('/ticket', 'TicketController@create')->name('ticket-create');
 Route::post('/ticket/load-file', 'TicketController@uploadFile')->name('upload-file');
+Route::get('/ticket/show/{ticket}', 'TicketController@show')->name('show-ticket');
+Route::get('/ticket/solicitados', 'TicketController@list')->name('my-tickets');
+Route::get('/ticket/take/{ticket}', 'TicketController@take')->name('take-ticket');
+Route::delete('/ticket/{ticket}', 'TicketController@delete')->name('ticket-delet');
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/ticket/new', 'HomeController@new')->name('new-ticket');
-Route::get('/ticket/index', 'HomeController@list')->name('index-ticket');
-Route::get('/ticket/show/{ticket}', 'HomeController@show')->name('show-ticket');
-Route::get('/ticket/take/{ticket}', 'HomeController@take')->name('take-ticket');
-Route::delete('/ticket/{ticket}', 'HomeController@delet')->name('ticket-delet');
-Route::get('/ticket/solicitados', 'HomeController@my_list')->name('my-tickets');
 
+Route::get('/ticket/index', 'HomeController@list')->name('index-ticket');
+
+
+//  rutas para usuarios
 Route::get('/user/new', 'UserController@new')->name('new-user');
 Route::get('/users/index', 'UserController@index')->name('index-user');
 Route::get('/users/user/{user}', 'UserController@show')->name('see-user');
