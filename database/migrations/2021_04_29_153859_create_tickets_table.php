@@ -19,10 +19,11 @@ class CreateTicketsTable extends Migration
             //  $table->unsignedInteger('user_id');
             $table->unsignedInteger('status_id')->nullable();
             $table->unsignedInteger('priority_id')->nullable();
-            $table->unsignedInteger('category_id')->nullable();
-            $table->unsignedInteger('project')->nullable();
+            //  $table->unsignedInteger('category_id')->nullable();
+            $table->unsignedInteger('project_id')->nullable();
             $table->text('description')->nullable();
-            $table->date('date_expired')->nullable();
+            $table->date('due_date')->nullable();
+            $table->time('due_hour')->nullable();
             $table->timestamps();
         });
     }
