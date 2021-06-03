@@ -19,9 +19,10 @@ class TicketSeeder extends Seeder
             'titulo' => 'Soporte',
             'status_id' => '1',
             'priority_id' => '1',
-            'category_id' => '2',
-            'project' => 1,
-            'date_expired' => Now(),
+            //'category_id' => '2',
+            'project_id' => 1,
+            'due_date' => Now(),
+            'due_hour' => Now(),
             'description' => 'Problema con...'
         ]);
 
@@ -29,9 +30,10 @@ class TicketSeeder extends Seeder
             'titulo' => 'Asesoria',
             'status_id' => '2',
             'priority_id' => '2',
-            'category_id' => '3',
-            'project' => 1,
-            'date_expired' => Now(),
+            //'category_id' => '3',
+            'project_id' => 1,
+            'due_date' => Now(),
+            'due_hour' => Now(),
             'description' => 'Problema con...'
         ]);
 
@@ -39,9 +41,10 @@ class TicketSeeder extends Seeder
             'titulo' => 'Falla',
             'status_id' => '3',
             'priority_id' => '3',
-            'category_id' => '3',
-            'project' => 1,
-            'date_expired' => Now(),
+            //'category_id' => '3',
+            'project_id' => 1,
+            'due_date' => Now(),
+            'due_hour' => Now(),
             'description' => 'Problema con...'
         ]);
     }
