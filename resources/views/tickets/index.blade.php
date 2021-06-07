@@ -30,15 +30,19 @@
                 <td>{{$ticket->status->name}}</td>
                 <td>{{$ticket->priority->name}}</td>
                 <td>
+                @can('show')
                   <a href="{{route('show-ticket', $ticket)}}" class="btn btn-xs btn-info">
                     <img src="/icons/v.png" width="10" height="10"> Ver
                   </a>
+                @endcan
+                  @can('create')
                   @if( $ticket->status_id < 3)
                   <a href="{{route('take-ticket', $ticket)}}" class="btn btn-xs btn-primary">
                     <img src="/icons/t.png" width="10" height="10"> Tomar
                   </a>
                   @endif
-                  
+                  @endcan
+                  @can('destroy')
                   @if( $ticket->status_id < 3)
                   <form method="POST" action="{{route('ticket-delet', $ticket)}}" style="display: inline">
                     {{csrf_field()}} {{method_field('DELETE')}}
@@ -47,7 +51,7 @@
                     </button>
                   </form>
                   @endif
-                    
+                  @endcan 
                 </td>
               </tr>
             @endforeach

@@ -40,3 +40,5 @@ Route::get('/user/new', 'UserController@new')->name('new-user');
 Route::get('/users/index', 'UserController@index')->name('index-user');
 Route::get('/users/user/{user}', 'UserController@show')->name('see-user');
 Route::post('/user/create', 'UserController@create')->name('user-create');
+
+Route::post('/logout', 'UserController@logout')->name('logout');

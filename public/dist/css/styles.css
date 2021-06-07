@@ -2,6 +2,12 @@
 [x-cloak] {
   display: none;
 }
+
+.logo-ebp{
+  position: fixed;
+  bottom: 90%;
+  left: 5%;
+}
 /* Document
    ========================================================================== */
 

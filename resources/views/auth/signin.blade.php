@@ -16,7 +16,11 @@
 </head>
 
 <body class="h-screen font-sans login bg-cover">
+
 <div class="container mx-auto h-full flex flex-1 justify-center items-center">
+<div class = 'logo-ebp'>
+  <img src = "{{url('./dist/images/LOGO EBP CONSULTORES BLANCO.png')}}" alt = 'Image' />
+</div>
   <div class="w-full max-w-lg">
     <div class="leading-loose">
       <form class="max-w-xl m-4 p-10 bg-white rounded shadow-xl" action = "{{route('login')}}" method = 'post'>

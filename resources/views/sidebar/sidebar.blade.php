@@ -16,6 +16,7 @@
                 <span><i class="fa fa-angle-right float-right"></i></span>
             </a>
             <ul class="list-reset -mx-2 bg-white-medium-dark">
+                @can('create')
                 <li class="border-t mt-2 border-light-border w-full h-full px-2 py-3">
                     <a href="{{route('new-ticket')}}"
                         class="mx-4 font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
@@ -23,6 +24,7 @@
                         <span><i class="fa fa-angle-right float-right"></i></span>
                     </a>
                 </li>
+                @endcan
                 <li class="border-t mt-2 border-light-border w-full h-full px-2 py-3">
                     <a href="{{route('my-tickets')}}"
                         class="mx-4 font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
@@ -40,6 +42,7 @@
                 <span><i class="fa fa-angle-right float-right"></i></span>
             </a>
             <ul class="list-reset -mx-2 bg-white-medium-dark">
+                @can('create')
                 <li class="border-t mt-2 border-light-border w-full h-full px-2 py-3">
                     <a href="{{route('new-user')}}"
                         class="mx-4 font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
@@ -47,6 +50,7 @@
                         <span><i class="fa fa-angle-right float-right"></i></span>
                     </a>
                 </li>
+                @endcan
             </ul>
         </li>
         <li class="w-full h-full py-3 px-2 border-b border-light-border">

@@ -27,16 +27,20 @@
             <tr>
               <td>{{$user->id}}</td>
               <td>{{$user->name}}</td>
-              <td>{{$user->role->name}}</td>
+              <td>{{$user->roles->pluck('name')}}</td>
               <td>{{$user->email}}</td>
               <td>
                 <!--<a href="{{route('see-user', $user)}}" class="btn btn-xs btn-primary">-->
-                  <a href = '#' class = 'btn btn-xs btn-primary' onclick="return alert('En construccion')">
+                @can('show')
+                <a href = '#' class = 'btn btn-xs btn-primary' onclick="return alert('En construccion')">
                   <img src="/icons/v.png" width="10" height="10"> Ver
                 </a>
+                @endcan
+                @can('edit')
                 <a href="" class="btn btn-xs btn-info">
                   <img src="/icons/e.png" width="10" height="10"> Editar
                 </a>
+                @endcan
               </td>
             </tr>
             @endforeach

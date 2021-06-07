@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,6 +25,17 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function logout(Request $request){
+      Auth::logout();
+      $request->session()->invalidate();
+
+      $request->session()->regenerateToken();
+
+      return redirect('/');
+    }
+
+
     public function index()
     {
         $users = User::all();
