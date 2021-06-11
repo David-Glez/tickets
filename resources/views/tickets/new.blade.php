@@ -203,7 +203,26 @@
                                 name = 'date_expired'
                                 required 
                                 placeholder="Fecha">
-                            @error('projects')
+                            @error('date_expired')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>>
+                            @enderror
+                            
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                        <label class="block uppercase tracking-wide text-grey-darker text-xs font-light mb-1"
+                                for="grid-state">
+                            hora de entrega
+                        </label>
+                        <div class="relative">
+                            <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white-500"
+                                id="grid-first-name" 
+                                type="time"
+                                min="{{Now()}}"
+                                name = 'hour_expired'
+                                required 
+                                placeholder="hora">
+                            @error('hour_expired')
                                 <p class="text-red-500 text-xs italic">{{ $message }}</p>>
                             @enderror
                             

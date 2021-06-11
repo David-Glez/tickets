@@ -23,7 +23,7 @@
 </div>
   <div class="w-full max-w-lg">
     <div class="leading-loose">
-      <form class="max-w-xl m-4 p-10 bg-white rounded shadow-xl" action = "{{route('login')}}" method = 'post'>
+      <form class="max-w-xl m-4 p-10 bg-white rounded shadow-xl" action = "{{route('signin')}}" method = 'post'>
       @csrf
         <p class="text-gray-800 font-medium text-center text-lg font-bold">Login</p>
         <div class="">
@@ -44,6 +44,12 @@
                 </span>
             @enderror
         </div>
+
+            @if($errors->any())
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first() }}</strong>
+                </span>
+            @endif
         <div class="mt-4 items-center justify-between">
           <button class="px-4 py-1 text-white font-light tracking-wider bg-gray-900 rounded" type="submit">Iniciar sesión</button>
           <!--<a class="inline-block right-0 align-baseline  font-bold text-sm text-500 hover:text-blue-800" href="#">

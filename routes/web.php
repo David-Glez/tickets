@@ -36,9 +36,11 @@ Route::get('/ticket/index', 'HomeController@list')->name('index-ticket');
 
 
 //  rutas para usuarios
-Route::get('/user/new', 'UserController@new')->name('new-user');
+Route::get('/users/new', 'UserController@new')->name('new-user');
 Route::get('/users/index', 'UserController@index')->name('index-user');
 Route::get('/users/user/{user}', 'UserController@show')->name('see-user');
 Route::post('/user/create', 'UserController@create')->name('user-create');
+Route::delete('/user/delete/{user}', 'UserController@destroy')->name('user-delete');
 
 Route::post('/logout', 'UserController@logout')->name('logout');
+Route::post('/login', 'UserController@login')->name('signin');

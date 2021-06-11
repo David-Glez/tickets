@@ -6,18 +6,20 @@ use App\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use App\Departments;
+use App\Employees;
+use App\User_Ticket;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
 
   public function new()
   {
-    $roles = Role::all();
-    return view('users.new', compact('roles'));
+    $roles = Role::where('name', '!=', 'root')->get();
+    $departments = Departments::all();
+    return view('users.new', compact('roles', 'departments'));
   }
 
     /**
@@ -25,6 +27,23 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function login(Request $request){
+
+
+      $credentials = $request->only('email', 'password');
+
+      $validation = Auth::attempt($credentials);
+
+      if($validation){
+        return redirect()->route('home');
+      }else{
+        return redirect()->back()->withErrors([
+          'errors' => 'usuario o contraseña incorrectas'
+        ]);
+      }
+    }
+
 
     public function logout(Request $request){
       Auth::logout();
@@ -49,21 +68,44 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-      $this->validate($request, [
-          'name' => ['required', 'string', 'max:255'],
-          'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+      try{
+        $request->validate([
+          'names' => ['required', 'string'],
+          'last_name' => ['required', 'string'],
+          'department' => ['required'],
+          'username' => ['required'],
           'role' => ['required'],
-          'password' => ['required', 'string', 'min:8', 'confirmed'],
-      ]);
+          'email' => ['required', 'string', 'email', 'unique:users'],
+          'password' => ['required', 'string', 'min:8', 'confirmed']
+        ]);
 
-      $user = new User;
-      $user->name = $request->get('name');
-      $user->email = $request->get('email');
-      $user->role_id = $request->get('role');
-      $user->password = $request->get('password');
-      $user->save();
+        //  create new user
+        $user = User::create([
+          'name' => $request->username,
+          'email' => $request->email,
+          'password' => bcrypt($request->password),
+          'email_verified_at' => Now()
+        ]);
 
-      return redirect()->route('home')->withFlash('Usuario creado');
+        //  assign role and permissions
+        $role = Role::find($request->role);
+        $user->assignRole($role->name);
+
+        //  save user data
+        Employees::create([
+          'user_id' => $user->id,
+          'names' => $request->names,
+          'last_name' => $request->last_name,
+          'department' => $request->department
+        ]);
+
+        return redirect()->route('home')->withFlash('Usuario creado');
+
+      }catch(ValidationException $e){
+        //dd($e->errors());
+
+        return redirect()->back()->withErrors($e->errors());
+      }
 
     }
 
@@ -122,8 +164,17 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($user)
     {
-        //
+        //  delete user tickets
+        User_Ticket::where('user_id', $user)->delete();
+        
+        //  delete user data
+        Employees::where('user_id', $user)->delete();
+
+        //  delete user credentials
+        User::find($user)->delete();
+
+        return redirect()->route('home')->withFlash('Usuario Eliminado');
     }
 }

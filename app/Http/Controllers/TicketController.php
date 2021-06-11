@@ -9,10 +9,12 @@ use App\Ticket;
 use App\User;
 use App\Priority;
 use App\Category;
+use App\Mail\NewTicketAssigned;
 use App\Projects;
 use App\User_Ticket;
 use App\ProjectFiles;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -72,6 +74,7 @@ class TicketController extends Controller
 
     //  crea un ticket 
     public function create(Request $request){
+
         
         try{
             $this->validate($request, [
@@ -82,7 +85,8 @@ class TicketController extends Controller
                 'priority' => 'required',
                 'description' => 'required',
                 'usuarios' => 'required',
-                'date_expired' => 'required'
+                'date_expired' => 'required',
+                'hour_expired' => 'required'
             ]);
 
             //  create ticket
@@ -90,9 +94,10 @@ class TicketController extends Controller
                 'titulo' => $request->titulo,
                 'status_id' => '1',
                 'priority_id' => $request->priority,
-                'project' => $request->project,
+                'project_id' => $request->project,
                 'description' => $request->description,
-                'date_expired' => $request->date_expired
+                'due_date' => $request->date_expired,
+                'due_hour' => $request->hour_expired
             ]);
 
             //  assign ticket for each user selected
@@ -126,8 +131,19 @@ class TicketController extends Controller
                 ]);
             }
 
-            //  TODO: send email when ticket is created
+            $details = [
+                'title' => 'Asignación de nuevo ticket',
+                'body' => 'Ha sido asignado al ticket '.$ticket->titulo.'. Verifique esta asignacion en la pagina principal ',
+                'expired' => 'La actividad vence el '.$ticket->due_date.' a las '.$ticket->due_hour
+            ];
 
+            $employeesAssigned = User::find($listUsers);
+            
+            foreach($employeesAssigned as $employee){
+
+                Mail::to($employee->email)->send(new NewTicketAssigned($details));
+            }
+            
             return redirect()->route('home')->withFlash('Tu ticket ha sido enviado');
 
         }catch(ValidationException $e){

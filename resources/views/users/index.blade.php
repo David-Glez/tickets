@@ -41,6 +41,17 @@
                   <img src="/icons/e.png" width="10" height="10"> Editar
                 </a>
                 @endcan
+                @can('destroy')
+                  @if($user->id != 1)
+                  <form method="post" action="{{route('user-delete', $user)}}" style="display: inline">
+                    @csrf
+                    {{method_field('DELETE')}}
+                      <button class="btn btn-xs btn-danger" onclick="return confirm('¿Está seguro de querer eliminar?')">
+                        <img src="/icons/x.png" width="10" height="10"> Eliminar
+                      </button>
+                  </form>
+                  @endif
+                @endcan
               </td>
             </tr>
             @endforeach

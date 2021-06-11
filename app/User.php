@@ -13,6 +13,10 @@ class User extends Authenticatable
     use Notifiable;
     use HasRoles;
 
+    public function user_data(){
+        return $this->hasOne(Employees::class, 'user_id', 'id');
+    }
+
     public function tickets(){
         return $this->hasMany(User_Ticket::class, 'user_id', 'id');
     }

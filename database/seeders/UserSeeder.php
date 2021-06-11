@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
 
         //  create roles and assign created permissions
         //  super user with all permissions
-        $role = Role::create(['name' => 'root']);
+        $sa = Role::create(['name' => 'root']);
         //  gets all permission via Gate::before
 
         //  admin user
@@ -66,6 +66,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('root'),
             'email_verified_at' => Now()
         ]);
+        $root->assignRole($sa);
 
         $user1 = User::create([
             'name' => 'Jhon',

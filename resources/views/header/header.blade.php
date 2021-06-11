@@ -8,7 +8,7 @@
         
             <img onclick="profileToggle()" class="inline-block h-8 w-8 rounded-full" src="https://avatars0.githubusercontent.com/u/4323180?s=460&v=4" alt="">
             <a href="#" onclick="profileToggle()" class="text-white p-2 no-underline hidden md:block lg:block">
-            {{Auth::user()->name}} || {{Auth::user()->roles()->pluck('name')}}
+            {{Auth::user()->user_data->names }} {{Auth::user()->user_data->last_name }} || {{Auth::user()->roles()->pluck('name')}}
             </a>
             <div id="ProfileDropDown" class="rounded hidden shadow-md bg-white absolute pin-t mt-12 mr-1 pin-r">
                 <ul class="list-reset">
