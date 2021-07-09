@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Departments;
 use App\Employees;
+use App\Projects;
 use App\User_Ticket;
 use Illuminate\Validation\ValidationException;
 
@@ -19,7 +20,12 @@ class UserController extends Controller
   {
     $roles = Role::where('name', '!=', 'root')->get();
     $departments = Departments::all();
-    return view('users.new', compact('roles', 'departments'));
+    if(Auth::user()->hasRole('root')){
+      $bussines = Projects::all();
+    }else{
+      $bussines = Projects::where('id', Auth::user()->project)->get();
+    }
+    return view('users.new', compact('roles', 'departments', 'bussines'));
   }
 
     /**
@@ -57,8 +63,51 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::all();
-        return view('users.index', compact('users'));
+        $users = [];
+        //$users = User::all();
+      $user_rol = Auth::user()->hasRole('root');
+
+      if($user_rol){
+        $users_list = User::where('id', '!=', 1)->get();
+        foreach($users_list as $user){
+
+          $department = Departments::find($user->user_data->department);
+          $project = Projects::find($user->project);
+
+          $data = array(
+            'id' => $user->id,
+            'nombre' => $user->user_data->names.' '.$user->user_data->last_names,
+            'departamento' => $department->name,
+            'proyecto' => $project->empresa,
+            'roles' => $user->roles->pluck('name'),
+            'email' => $user->email
+          );
+          array_push($users, $data);
+        }
+
+      }else{
+        $project_id = Auth::user()->project;
+
+        $users_list = User::where('project', $project_id)->get();
+        
+        foreach($users_list as $user){
+
+          $department = Departments::find($user->user_data->department);
+          $project = Projects::find($user->project);
+
+          $data = array(
+            'id' => $user->id,
+            'nombre' => $user->user_data->names.' '.$user->user_data->last_names,
+            'departamento' => $department->name,
+            'proyecto' => $project->empresa,
+            'roles' => $user->roles->pluck('name'),
+            'email' => $user->email
+          );
+          array_push($users, $data);
+        }
+      }
+
+      return view('users.index', compact('users'));
     }
 
     /**
@@ -76,7 +125,8 @@ class UserController extends Controller
           'username' => ['required'],
           'role' => ['required'],
           'email' => ['required', 'string', 'email', 'unique:users'],
-          'password' => ['required', 'string', 'min:8', 'confirmed']
+          'password' => ['required', 'string', 'min:8', 'confirmed'],
+          'empresa' => ['required']
         ]);
 
         //  create new user
@@ -84,7 +134,8 @@ class UserController extends Controller
           'name' => $request->username,
           'email' => $request->email,
           'password' => bcrypt($request->password),
-          'email_verified_at' => Now()
+          'email_verified_at' => Now(),
+          'project' => $request->empresa
         ]);
 
         //  assign role and permissions

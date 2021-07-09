@@ -17,6 +17,8 @@
             <tr>
               <th>ID</th>
               <th>Nombre</th>
+              <th>Departamento</th>
+              <th>Proyecto</th>
               <th>Rol</th>
               <th>E-mail</th>
               <th>Acciones</th>
@@ -25,12 +27,14 @@
           <tbody>
             @foreach ($users as $user)
             <tr>
-              <td>{{$user->id}}</td>
-              <td>{{$user->name}}</td>
-              <td>{{$user->roles->pluck('name')}}</td>
-              <td>{{$user->email}}</td>
+              <td>{{$user['id']}}</td>
+              <td>{{$user['nombre']}}</td>
+              <td>{{$user['departamento']}}</td>
+              <td>{{$user['proyecto']}}</td>
+              <td>{{$user['roles']}}</td>
+              <td>{{$user['email']}}</td>
               <td>
-                <!--<a href="{{route('see-user', $user)}}" class="btn btn-xs btn-primary">-->
+                
                 @can('user.show')
                 <a href = '#' class = 'btn btn-xs btn-primary' onclick="return alert('En construccion')">
                   <img src="/icons/v.png" width="10" height="10"> Ver
@@ -42,15 +46,15 @@
                 </a>
                 @endcan
                 @can('user.destroy')
-                  @if($user->id != 1)
-                  <form method="post" action="{{route('user-delete', $user)}}" style="display: inline">
+                  
+                  <form method="post" action="{{route('user-delete', $user['id'])}}" style="display: inline">
                     @csrf
                     {{method_field('DELETE')}}
                       <button class="btn btn-xs btn-danger" onclick="return confirm('¿Está seguro de querer eliminar?')">
                         <img src="/icons/x.png" width="10" height="10"> Eliminar
                       </button>
                   </form>
-                  @endif
+                  
                 @endcan
               </td>
             </tr>

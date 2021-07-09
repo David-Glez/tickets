@@ -90,6 +90,7 @@ class UserSeeder extends Seeder
         //  create user's list for development
         $root = User::create([
             'name' => 'root',
+            'project' => 0,
             'email' => 'root@root',
             'password' => bcrypt('root'),
             'email_verified_at' => Now()
@@ -99,6 +100,7 @@ class UserSeeder extends Seeder
         $user1 = User::create([
             'name' => 'Jhon',
             'email' => '1@1',
+            'project' => 1,
             //'role_id' => '1',
             'password' => bcrypt('1'),
             'email_verified_at' => Now()
@@ -107,6 +109,7 @@ class UserSeeder extends Seeder
 
         $user2 = User::create([
             'name' => 'Alice',
+            'project' => 1,
             'email' => '2@2',
             //'role_id' => '2',
             'password' => bcrypt('2'),
@@ -118,6 +121,7 @@ class UserSeeder extends Seeder
         $user3 = User::create([
             'name' => 'Jose',
             'email' => '3@3',
+            'project' => 2,
             //'role_id' => '3',
             'password' => bcrypt('3'),
             'email_verified_at' => Now()
@@ -127,6 +131,7 @@ class UserSeeder extends Seeder
         $user4 = User::create([
             'name' => 'Maria',
             'email' => '4@4',
+            'project' => 2,
             //'role_id' => '3',
             'password' => bcrypt('4'),
             'email_verified_at' => Now()

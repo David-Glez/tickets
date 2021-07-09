@@ -10,7 +10,8 @@
     crossorigin="anonymous">
   <style>
   .login{
-    background: url('./dist/images/login-new.jpeg')
+    background: url('./dist/images/fondo.jpeg') no-repeat;
+    background-size: 100%;
   }
   </style>  
 </head>

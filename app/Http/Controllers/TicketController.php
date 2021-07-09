@@ -112,7 +112,11 @@ class TicketController extends Controller
         $priority = Priority::all();
         $category = Category::all();
         $projects = Projects::all();
-        $users = User::select('id', 'name')->get();
+        if(Auth::user()->hasRole('root')){
+            $users = User::select('id', 'name')->get();
+        }else{
+            $users = User::select('id', 'name')->where('project', Auth::user()->project)->get();
+        }
         
         return view('tickets.new', compact('priority','category', 'users', 'projects'));
     }
@@ -330,38 +334,4 @@ class TicketController extends Controller
         }
     }
 
-    //  carga un archivo
-    public function uploadFile(Request $request){
-        //  dd($request);
-
-        try{
-            //  es necesario que se seleccione el archivo, sino habra un error
-            $request->validate([
-                'id_ticket' => ['required'],
-                'id_usuario' => ['required'],
-                'archivo_cargar' => ['required']
-            ]);
-
-            //  mueve el archvo a storage
-            $file = $request->file('archivo_cargar');   //  archivo recibido
-            $name = $file->getClientOriginalName(); //  este es el nombre original, se puede cambiar por el que sea
-            //$extension = $file->getClientOriginalExtension(); //  extension del archivo en el caso de que cambie el nombre
-
-            //$fileName = $name.'.'.$extension; //  este seria el nombre modificado
-
-            //  la variable path es la direccion de donde se guarda el archivo, hay que guardarla en la bd
-            $path = Storage::putFileAs(
-                'public/files', //  direccion en donde se guardan los archivos, en storage/public/files
-                $file,  //  el archivo que se va a guardar
-                $name   //  nombre con el que se va a guardar el archivo
-            );
-            //  dd($path);
-            return redirect()->route('home')->withFlash('Archivo guardado!');
-
-        }catch(ValidationException $e){
-            //  aqui va el error a mostrar
-            //  dd($e);
-            return redirect()->route('home')->withFlash('Es necesario añadir un archivo');
-        }
-    }
 }
