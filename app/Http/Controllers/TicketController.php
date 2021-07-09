@@ -9,6 +9,8 @@ use App\Ticket;
 use App\User;
 use App\Priority;
 use App\Category;
+use App\Commits;
+use App\Departments;
 use App\Mail\NewTicketAssigned;
 use App\Projects;
 use App\User_Ticket;
@@ -33,9 +35,74 @@ class TicketController extends Controller
             $usersList[] = $data;
         }
 
+        $commits = Commits::where('ticket_id', $ticket->id)->orderByDesc('created_at')->get();
+        
+        $commit_details = [];
+
+        foreach($commits as $commit){
+            $user = User::find($commit->user_id);
+            
+            $data = array(
+                'id' => $commit->id,
+                'user' => $user->user_data->names.' '.$user->user_data->last_name,
+                'commit' => $commit->commit,
+                'date' => $commit->created_at
+            );
+
+            $commit_details[] = $data;
+        }
+
+        return view('tickets.show_ticket')->with([
+            'ticket' => $ticket,
+            'user_tickets' => $usersList,
+            'commits' => $commit_details
+            ]);
+    }
+
+    //  para ver y comentar el ticket
+    public function details($id){
+        $ticket = Ticket::find($id);
+        $users = User_Ticket::where('ticket_id', $ticket->id)->get();
+        $usersList = [];
+        foreach($users as $user){
+            
+            $data = array(
+                'id' => $user->id,
+                'name' => $user->user->name
+            );
+            $usersList[] = $data;
+        }
+
+        $commits = Commits::where('ticket_id', $ticket->id)->orderByDesc('created_at')->get();
+        
+        $commit_details = [];
+
+        foreach($commits as $commit){
+            $user = User::find($commit->user_id);
+            
+            $data = array(
+                'id' => $commit->id,
+                'user' => $user->user_data->names.' '.$user->user_data->last_name,
+                'commit' => $commit->commit,
+                'date' => $commit->created_at
+            );
+
+            $commit_details[] = $data;
+        }
+        // }else{
+        //     $data = array(
+        //         'id' => 0,
+        //         'user' => '0',
+        //         'commit' => 'No hay comentarios',
+        //         'date' => Now()
+        //     );
+        //     $commit_details[] = $data;
+        // }
+
         return view('tickets.ticket')->with([
             'ticket' => $ticket,
             'user_tickets' => $usersList,
+            'commits' => $commit_details
             ]);
     }
 
@@ -92,6 +159,7 @@ class TicketController extends Controller
             //  create ticket
             $ticket = Ticket::create([
                 'titulo' => $request->titulo,
+                'solicitante' => Auth::user()->id,
                 'status_id' => '1',
                 'priority_id' => $request->priority,
                 'project_id' => $request->project,
@@ -153,13 +221,35 @@ class TicketController extends Controller
 
     public function list(){
         $keys = [];
+        $data_list = [];
         $usertickets = User_Ticket::where('user_id', Auth::user()->id)->get();
         foreach($usertickets as $item){
             array_push($keys, $item->ticket_id);
         }
         $tickets = Ticket::find($keys);
 
-        return view('tickets.solicitados', compact('tickets'));
+        foreach($tickets as $ticket){
+            $user = User::find($ticket->solicitante);
+            $department = Departments::find($user->user_data->department);
+            
+            $applicant = $user->user_data->names.' '.$user->user_data->last_name;
+            $department_user = $department->name;
+
+            $data = array(
+                'id' => $ticket->id,
+                'solicitante' => $applicant,
+                'departamento' => $department_user,
+                'proyecto' => $ticket->projects->empresa,
+                'status' => $ticket->status->name,
+                'titulo' => $ticket->titulo,
+                'prioridad' => $ticket->priority->name,
+                'status_id' => $ticket->status_id
+            );
+
+            $data_list[] = $data;
+        }
+
+        return view('tickets.solicitados', compact('data_list'));
     }
 
     //  modifica el ticket seleccionado
@@ -167,10 +257,77 @@ class TicketController extends Controller
 
     }
 
-    public function delete(Ticket $ticket){
+    public function delete($ticket){
         
         $toDelete = User_Ticket::where('ticket_id', $ticket->id)->where('user_id', Auth::user()->id)->delete();
         return back()->withFlash('Ticket eliminado');
+    }
+
+    //  comentar un ticket
+    public function commit(Request $request){
+        try{
+
+            $request->validate([
+                'id_ticket' => ['required'],
+                'commit_user' => ['required']
+            ]);
+
+            //  create ticket commit
+
+            Commits::create([
+                'user_id' =>  Auth::user()->id,
+                'ticket_id' => $request->id_ticket,
+                'commit' => $request->commit_user
+            ]);
+
+            if($request->hasFile('evidencia')){
+                $file = $request->file('evidencia');   //  archivo recibido
+                $name = $file->getClientOriginalName(); //  este es el nombre original, se puede cambiar por el que sea
+                //$extension = $file->getClientOriginalExtension(); //  extension del archivo en el caso de que cambie el nombre
+
+                //$fileName = $name.'.'.$extension; //  este seria el nombre modificado
+
+                //  la variable path es la direccion de donde se guarda el archivo, hay que guardarla en la bd
+                $path = Storage::putFileAs(
+                    'public/files', //  direccion en donde se guardan los archivos, en storage/public/files
+                    $file,  //  el archivo que se va a guardar
+                    $name   //  nombre con el que se va a guardar el archivo
+                );
+
+                ProjectFiles::create([
+                    'id_ticket' => $request->id_ticket,
+                    'path' => $path
+                ]);
+            }
+
+            $ticket = Ticket::find($request->id_ticket);
+
+            $username = Auth::user()->user_data->names.' '.Auth::user()->user_data->last_name;
+
+            //  send email to users
+            $details = [
+                'title' => 'Se ha comentado un ticket',
+                'body' => 'El ticket '.$ticket->titulo.'. ha sido comentado por '.$username.'. Revise el ticket por favor.',
+                'expired' => 'Recuerde que la actividad vence el '.$ticket->due_date.' a las '.$ticket->due_hour
+            ];
+
+            $users = [];
+            $usersAssigned = User_Ticket::where('ticket_id', $request->id_ticket)->get();
+            foreach($usersAssigned as $user){
+                array_push($users, $user->id);
+            }
+            $employeesAssigned = User::find($users);
+            
+            foreach($employeesAssigned as $employee){
+
+                Mail::to($employee->email)->send(new NewTicketAssigned($details));
+            }
+
+            return redirect()->route('home')->withFlash('Ticket Comentado.');
+
+        }catch(ValidationException $e){
+            return redirect()->route('home')->withFlash('Faltan datos para el comentario.');
+        }
     }
 
     //  carga un archivo

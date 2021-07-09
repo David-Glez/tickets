@@ -17,34 +17,40 @@
             <tr>
                 <th>Folio</th>
                 <th>Titulo</th>
+                <th>Solicitante</th>
+                <th>Departamento</th>
+                <th>Proyecto</th>
                 <th>Estatus</th>
                 <th>Prioridad</th>
                 <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-          @foreach ($tickets as $ticket)
+          @foreach ($ticket_info as $ticket)
               <tr>
-                <td scope="row">{{$ticket->id}}</td>
-                <td>{{$ticket->titulo}}</td>
-                <td>{{$ticket->status->name}}</td>
-                <td>{{$ticket->priority->name}}</td>
+                <td scope="row">{{$ticket['id']}}</td>
+                <td>{{$ticket['titulo']}}</td>
+                <td>{{$ticket['solicitante']}}</td>
+                <td>{{$ticket['departamento']}}</td>
+                <td>{{$ticket['proyecto']}}</td>
+                <td>{{$ticket['status']}}</td>
+                <td>{{$ticket['prioridad']}}</td>
                 <td>
-                @can('show')
-                  <a href="{{route('show-ticket', $ticket)}}" class="btn btn-xs btn-info">
+                @can('ticket.show')
+                  <a href="{{route('show-ticket', $ticket['id'])}}" class="btn btn-xs btn-info">
                     <img src="/icons/v.png" width="10" height="10"> Ver
                   </a>
                 @endcan
-                  @can('create')
-                  @if( $ticket->status_id < 3)
-                  <a href="{{route('take-ticket', $ticket)}}" class="btn btn-xs btn-primary">
+                  @can('ticket.take')
+                  @if( $ticket['status_id'] < 3)
+                  <a href="{{route('take-ticket', $ticket['id'])}}" class="btn btn-xs btn-primary">
                     <img src="/icons/t.png" width="10" height="10"> Tomar
                   </a>
                   @endif
                   @endcan
-                  @can('destroy')
-                  @if( $ticket->status_id < 3)
-                  <form method="POST" action="{{route('ticket-delet', $ticket)}}" style="display: inline">
+                  @can('ticket.destroy')
+                  @if( $ticket['status_id'] < 3)
+                  <form method="POST" action="{{route('ticket-delet', $ticket['id'])}}" style="display: inline">
                     {{csrf_field()}} {{method_field('DELETE')}}
                     <button class="btn btn-xs btn-danger" onclick="return confirm('¿Está seguro de querer eliminar?')">
                       <img src="/icons/x.png" width="10" height="10"> Rechazar

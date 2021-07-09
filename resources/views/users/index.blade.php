@@ -31,17 +31,17 @@
               <td>{{$user->email}}</td>
               <td>
                 <!--<a href="{{route('see-user', $user)}}" class="btn btn-xs btn-primary">-->
-                @can('show')
+                @can('user.show')
                 <a href = '#' class = 'btn btn-xs btn-primary' onclick="return alert('En construccion')">
                   <img src="/icons/v.png" width="10" height="10"> Ver
                 </a>
                 @endcan
-                @can('edit')
+                @can('user.edit')
                 <a href="" class="btn btn-xs btn-info">
                   <img src="/icons/e.png" width="10" height="10"> Editar
                 </a>
                 @endcan
-                @can('destroy')
+                @can('user.destroy')
                   @if($user->id != 1)
                   <form method="post" action="{{route('user-delete', $user)}}" style="display: inline">
                     @csrf

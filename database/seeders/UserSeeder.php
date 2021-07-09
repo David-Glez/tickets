@@ -22,12 +22,20 @@ class UserSeeder extends Seeder
         //  reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        //  create permissions
-        Permission::create(['name' => 'index']);
-        Permission::create(['name' => 'edit']);
-        Permission::create(['name' => 'create']);
-        Permission::create(['name' => 'show']);
-        Permission::create(['name' => 'destroy']);
+        //  create permissions for each section
+        //  Tickets section
+        Permission::create(['name' => 'ticket.take']);
+        Permission::create(['name' => 'ticket.edit']);
+        Permission::create(['name' => 'ticket.create']);
+        Permission::create(['name' => 'ticket.show']);
+        Permission::create(['name' => 'ticket.destroy']);
+        Permission::create(['name' => 'ticket.commit']);
+
+        //  Users section
+        Permission::create(['name' => 'user.edit']);
+        Permission::create(['name' => 'user.create']);
+        Permission::create(['name' => 'user.show']);
+        Permission::create(['name' => 'user.destroy']);
 
         //  create roles and assign created permissions
         //  super user with all permissions
@@ -37,27 +45,47 @@ class UserSeeder extends Seeder
         //  admin user
         $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo([
-            'index',
-            'create',
-            'edit',
-            'show',
-            'destroy'
+            'ticket.take',
+            'ticket.edit',
+            'ticket.create',
+            'ticket.show',
+            'ticket.destroy',
+            'ticket.commit',
+            'user.edit',
+            'user.create',
+            'user.show',
+            'user.destroy'
         ]);
 
         //  soporte user
         $soporte = Role::create(['name' => 'soporte']);
         $soporte->givePermissionTo([
-            'index',
-            'show',
-            'edit'
+            'ticket.take',
+            'ticket.create',
+            'ticket.show',
+            'ticket.commit',
+            'user.show'
+        ]);
+
+        //  externo
+        $externo = Role::create(['name' => 'externo']);
+        $externo->givePermissionTo([
+            'ticket.edit',
+            'ticket.create',
+            'ticket.show',
+            'user.edit',
+            'user.create',
+            'user.show'
         ]);
 
         //  cliente
-        $cliente = Role::create(['name' => 'cliente']);
+        $cliente = Role::create(['name' => 'usuario']);
         $cliente->givePermissionTo([
-            'index',
-            'show'
+            'ticket.take',
+            'ticket.show',
+            'ticket.commit'
         ]);
+
 
         //  create user's list for development
         $root = User::create([
@@ -94,7 +122,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('3'),
             'email_verified_at' => Now()
         ]);
-        $user3->assignRole($cliente);
+        $user3->assignRole($externo);
 
         $user4 = User::create([
             'name' => 'Maria',

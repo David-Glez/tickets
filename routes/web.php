@@ -24,11 +24,12 @@ Auth::routes();
 //  rutas para los tickets
 Route::get('/ticket/new', 'TicketController@new')->name('new-ticket');
 Route::post('/ticket', 'TicketController@create')->name('ticket-create');
-Route::post('/ticket/load-file', 'TicketController@uploadFile')->name('upload-file');
 Route::get('/ticket/show/{ticket}', 'TicketController@show')->name('show-ticket');
 Route::get('/ticket/solicitados', 'TicketController@list')->name('my-tickets');
 Route::get('/ticket/take/{ticket}', 'TicketController@take')->name('take-ticket');
 Route::delete('/ticket/{ticket}', 'TicketController@delete')->name('ticket-delet');
+Route::get('/ticket/detalles/{id}', 'TicketController@details')->name('ticket-details');
+Route::post('/ticket/commit', 'TicketController@commit')->name('commit-ticket');
 
 Route::get('/home', 'HomeController@index')->name('home');
 

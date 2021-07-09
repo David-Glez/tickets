@@ -19,31 +19,39 @@
             <tr>
                 <th>Folio</th>
                 <th>Titulo</th>
+                <th>Solicitante</th>
+                <th>Departamento</th>
+                <th>Proyecto</th>
                 <th>Estatus</th>
                 <th>Prioridad</th>
                 <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-          @foreach ($tickets as $ticket)
+          @foreach ($data_list as $ticket)
             <tr>
-              <td>{{$ticket->id}}</td>
-              <td>{{$ticket->titulo}}</td>
-              <td>{{$ticket->status->name}}</td>
-              <td>{{$ticket->priority->name}}</td>
+                <td scope="row">{{$ticket['id']}}</td>
+                <td>{{$ticket['titulo']}}</td>
+                <td>{{$ticket['solicitante']}}</td>
+                <td>{{$ticket['departamento']}}</td>
+                <td>{{$ticket['proyecto']}}</td>
+                <td>{{$ticket['status']}}</td>
+                <td>{{$ticket['prioridad']}}</td>
               <td>
-                <a href="{{route('show-ticket', $ticket)}}" class="btn btn-xs btn-info">
+                <a href="{{route('ticket-details', $ticket['id'])}}" class="btn btn-xs btn-info">
                   <img src="/icons/v.png" width="10" height="10"> Ver </img>
                 </a>
-                @if($ticket->status_id < 3 )
+                @can('ticket.destroy')
+                @if($ticket['status_id']  < 3 )
                 
-                <form method="POST" action="{{route('ticket-delet', $ticket)}}" style="display: inline">
+                <form method="POST" action="{{route('ticket-delet', $ticket['id'])}}" style="display: inline">
                   {{csrf_field()}} {{method_field('DELETE')}}
                   <button class="btn btn-xs btn-danger" onclick="return confirm('¿Está seguro de querer eliminar?')">
                     <img src="/icons/x.png" width="10" height="10"> Rechazar
                   </button>
                 </form>
                 @endif
+                @endcan
               </td>
             </tr>
             @endforeach

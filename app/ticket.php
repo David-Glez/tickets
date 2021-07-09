@@ -13,7 +13,7 @@ class Ticket extends Model
   }*/
   protected $primaryKey = 'id';
   protected $fillable = [
-    'titulo', 'status_id', 'priority_id', 'project_id', 'description', 'due_date', 'due_hour'
+    'titulo', 'status_id', 'solicitante', 'priority_id', 'project_id', 'description', 'due_date', 'due_hour'
   ];
 
   public function projects(){
