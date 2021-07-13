@@ -64,7 +64,7 @@ class UserSeeder extends Seeder
             'ticket.create',
             'ticket.show',
             'ticket.commit',
-            'user.show'
+            //'user.show'
         ]);
 
         //  externo
