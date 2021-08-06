@@ -29,9 +29,49 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
+     // show pending tickets in dashboard view
     public function index()
     {
-      return view('layouts.home');
+      $ticket_info = [];
+
+      if(Auth::user()->hasRole('root')){
+        $tickets = Ticket::all();
+
+        foreach($tickets as $ticket){
+          $data = array(
+            'id' => $ticket->id,
+            'titulo' => $ticket->titulo,
+            'status' => $ticket->status->name,
+            'id_status' => $ticket->status->id,
+            'prioridad' => $ticket->priority->name,
+            'id_priority' => $ticket->priority->id,
+            'descripcion' => $ticket->description,
+            'proyecto' => $ticket->projects->empresa,
+            'fecha' => $ticket->due_date.' '.$ticket->due_hour
+          );
+          $ticket_info[] = $data;
+        }
+        
+      }else{
+        $tickets = Ticket::where('project_id', Auth::user()->project)->get();
+        foreach($tickets as $ticket){
+          $data = array(
+            'id' => $ticket->id,
+            'titulo' => $ticket->titulo,
+            'status' => $ticket->status->name,
+            'id_status' => $ticket->status->id,
+            'prioridad' => $ticket->priority->name,
+            'id_priority' => $ticket->priority->id,
+            'descripcion' => $ticket->description,
+            'proyecto' => $ticket->projects->empresa,
+            'fecha' => $ticket->due_date.' '.$ticket->due_hour
+          );
+          $ticket_info[] = $data;
+        }
+      }
+
+      return view('dashboard.dashboard', compact('ticket_info'));
     }
 
     public function list()
