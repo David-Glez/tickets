@@ -44,9 +44,9 @@
                 @can('ticket.destroy')
                 @if($ticket['status_id']  < 3 )
                 
-                <form method="POST" action="{{route('ticket-delet', $ticket['id'])}}" style="display: inline">
+                <form method="POST" action="{{route('reject-ticket', $ticket['id'])}}" style="display: inline">
                   {{csrf_field()}} {{method_field('DELETE')}}
-                  <button class="btn btn-xs btn-danger" onclick="return confirm('¿Está seguro de querer eliminar?')">
+                  <button class="btn btn-xs btn-danger" onclick="return confirm('¿Está seguro de querer rechazar?')">
                     <img src="/icons/x.png" width="10" height="10"> Rechazar
                   </button>
                 </form>

@@ -220,7 +220,7 @@
                                 type="time"
                                 min="{{Now()}}"
                                 name = 'hour_expired'
-                                required 
+                                 
                                 placeholder="hora">
                             @error('hour_expired')
                                 <p class="text-red-500 text-xs italic">{{ $message }}</p>>

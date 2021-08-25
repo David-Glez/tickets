@@ -66,9 +66,12 @@
                         </label>
                         <div class="relative">
                             <select class="block appearance-none w-full bg-grey-200 border border-grey-200 text-grey-darker py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-grey"
-                                    id="grid-state"
-                                    disabled
-                                    >
+                                    id="grid-state" 
+                                    name = 'status_ticket'
+                                    required>
+                                @foreach($status as $item)
+                                    <option value="{{$item->id}}" @if($item->name == $ticket->status->name) selected='selected' @endif >{{$item->name}}</option>
+                                @endforeach
                                 <option value="">{{$ticket->status->name}}</option>
                           
                             </select>
@@ -169,6 +172,18 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3">
+                        <label class="block uppercase tracking-wide text-grey-darker text-xs font-light mb-1"
+                                for="grid-password">
+                            Comentario
+                        </label>
+                        <textarea class="appearance-none block w-full bg-grey-200 text-grey-darker border border-grey-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-grey"
+                                id="grid-password"
+                                name = 'commit_user'></textarea>
+                        
                     </div>
                 </div>
                 <div class="md:flex md:items-center">

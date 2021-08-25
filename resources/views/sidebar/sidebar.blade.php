@@ -8,6 +8,15 @@
                 <span><i class="fas fa-angle-right float-right"></i></span>
             </a>
         </li>
+        @can('log.show')
+        <li class="w-full h-full py-3 px-2 border-b border-light-border">
+            <a href="{{route('activity')}}"
+                class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                <i class="fas fa-clipboard-list float-left mx-2"></i>
+                Actividad
+            </a>
+        </li>
+        @endcan
         <li class="w-full h-full py-3 px-2 border-b border-light-border">
             <a href="{{route('index-ticket')}}"
                 class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">

@@ -11,6 +11,7 @@ use App\Departments;
 use App\User_Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\activity_log;
 
 class HomeController extends Controller
 {
@@ -72,6 +73,12 @@ class HomeController extends Controller
       }
 
       return view('dashboard.dashboard', compact('ticket_info'));
+    }
+
+    public function logs(Request $request){
+
+      $activity = activity_log::all();
+      return view('logs.index', compact('activity'));
     }
 
     public function list()

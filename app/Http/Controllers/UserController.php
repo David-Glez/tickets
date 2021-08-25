@@ -11,6 +11,7 @@ use App\Departments;
 use App\Employees;
 use App\Projects;
 use App\User_Ticket;
+use App\activity_log;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -150,6 +151,15 @@ class UserController extends Controller
           'department' => $request->department
         ]);
 
+        //  activity log
+        activity_log::create([
+          'user' => Auth::user()->id, 
+          'action' => 1, 
+          'section' => "Usuarios", 
+          'row_affected' => $user->id, 
+          'description' => "Usuario creado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
+          'date' => Now()
+        ]);
         return redirect()->route('home')->withFlash('Usuario creado');
 
       }catch(ValidationException $e){
@@ -160,17 +170,7 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
+   
     /**
      * Display the specified resource.
      *
@@ -179,11 +179,12 @@ class UserController extends Controller
      */
     public function show($id)
     {
-      $user = User::where('id', $id)->firstOrFail();
-
-      return view('users.user')->with([
-      'user' => $user,
-      ]);
+      $usuario = User::find($id);
+      $departments = Departments::all();
+      $roles = Role::where('name', '!=', 'root')->get();
+      $bussines = Projects::where('id', $usuario->project)->get();
+      
+      return view('users.user', compact('usuario', 'departments', 'roles', 'bussines'));
     }
 
     /**
@@ -195,6 +196,16 @@ class UserController extends Controller
     public function edit($id)
     {
         //
+        $usuario = User::find($id);
+        $departments = Departments::all();
+        $roles = Role::where('name', '!=', 'root')->get();
+        if(Auth::user()->hasRole('root')){
+          $bussines = Projects::all();
+        }else{
+          $bussines = Projects::where('id', Auth::user()->project)->get();
+        }
+
+        return view('users.edit', compact('usuario', 'departments', 'roles', 'bussines'));
     }
 
     /**
@@ -204,9 +215,43 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+      $idUser = $request->id_user;
+      
+      //  update data from user
+      $usuario = User::find($idUser);
+      $usuario->name = $request->username;
+      $usuario->email = $request->email;
+      $usuario->project = $request->empresa;
+      if($request->password != null && $request->password_confirmation != null){
+        $usuario->password = bcrypt($request->password);
+      }
+      $usuario->save();
+
+      //  update data from employees table
+      $empleado = Employees::where('user_id', $idUser)->first();
+      $empleado->names = $request->names;
+      $empleado->last_name = $request->last_name;
+      $empleado->department = $request->department;
+      $empleado->save();
+
+      //  assign role to user
+      //  remove old role
+      $usuario->removeRole($usuario->roles->first());
+      $role = Role::find($request->role);
+      $usuario->assignRole($role);
+
+      //  activity log
+      activity_log::create([
+        'user' => Auth::user()->id, 
+        'action' => 2, 
+        'section' => "Usuarios", 
+        'row_affected' => $usuario->id, 
+        'description' => "Usuario editado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
+        'date' => Now()
+      ]);
+      return redirect()->route('home')->withFlash('Usuario modificado');
     }
 
     /**
@@ -225,6 +270,16 @@ class UserController extends Controller
 
         //  delete user credentials
         User::find($user)->delete();
+
+        //  activity log
+        activity_log::create([
+          'user' => Auth::user()->id, 
+          'action' => 3, 
+          'section' => "Usuarios", 
+          'row_affected' => $user, 
+          'description' => "Usuario eliminado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
+          'date' => Now()
+        ]);
 
         return redirect()->route('home')->withFlash('Usuario Eliminado');
     }

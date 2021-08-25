@@ -15,6 +15,8 @@ use App\Mail\NewTicketAssigned;
 use App\Projects;
 use App\User_Ticket;
 use App\ProjectFiles;
+use App\Status;
+use App\activity_log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -63,6 +65,7 @@ class TicketController extends Controller
     public function details($id){
         $ticket = Ticket::find($id);
         $users = User_Ticket::where('ticket_id', $ticket->id)->get();
+        $status = Status::all();
         $usersList = [];
         foreach($users as $user){
             
@@ -102,7 +105,8 @@ class TicketController extends Controller
         return view('tickets.ticket')->with([
             'ticket' => $ticket,
             'user_tickets' => $usersList,
-            'commits' => $commit_details
+            'commits' => $commit_details,
+            'status' => $status
             ]);
     }
 
@@ -137,6 +141,16 @@ class TicketController extends Controller
                 'user_id' => Auth::user()->id,
                 'ticket_id' => $ticket->id
             ]);
+
+            //  activity log
+            activity_log::create([
+                'user' => Auth::user()->id, 
+                'action' => 4, 
+                'section' => "Tickets", 
+                'row_affected' => $ticket->id, 
+                'description' => "Ticket con ID ".$ticket->id." tomado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name, 
+                'date' => Now()
+            ]);
             return redirect()->route('index-ticket')->withFlash('Ticket tomado...');
         }else{
             return redirect()->route('index-ticket')->withErrors('Ya has tomado este ticket...');
@@ -157,7 +171,6 @@ class TicketController extends Controller
                 'description' => 'required',
                 'usuarios' => 'required',
                 'date_expired' => 'required',
-                'hour_expired' => 'required'
             ]);
 
             //  create ticket
@@ -216,6 +229,15 @@ class TicketController extends Controller
                 Mail::to($employee->email)->send(new NewTicketAssigned($details));
             }
             
+            //  activity log
+            activity_log::create([
+                'user' => Auth::user()->id, 
+                'action' => 1, 
+                'section' => "Tickets", 
+                'row_affected' => $ticket->id, 
+                'description' => "Ticket creado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
+                'date' => Now()
+            ]);
             return redirect()->route('home')->withFlash('Tu ticket ha sido enviado');
 
         }catch(ValidationException $e){
@@ -261,19 +283,59 @@ class TicketController extends Controller
 
     }
 
-    public function delete($ticket){
+    //  delete ticket from user
+    public function reject_ticket($ticket){
         
-        $toDelete = User_Ticket::where('ticket_id', $ticket->id)->where('user_id', Auth::user()->id)->delete();
-        return back()->withFlash('Ticket eliminado');
+        //  delete data from userstickets table
+        User_Ticket::where('ticket_id', $ticket)->where('user_id', Auth::user()->id)->delete();
+
+        $contador = User_Ticket::where('ticket_id', $ticket)->count();
+        
+        if($contador = 0){
+            $change = Ticket::find($ticket);
+            $change->status_id = 1;
+            $change->save();
+        }
+        
+        //  activity log
+        activity_log::create([
+            'user' => Auth::user()->id, 
+            'action' => 7, 
+            'section' => "Ticket", 
+            'row_affected' => $ticket, 
+            'description' => "Ticket rechazado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
+            'date' => Now()
+          ]);
+        return back()->withFlash('Ticket Rechazado');
+    }
+
+    //  delete ticket from system
+    public function remove($ticket){
+        User_Ticket::where('ticket_id', $ticket)->delete();
+        Ticket::find($ticket)->delete();
+
+        //  activity log
+        activity_log::create([
+            'user' => Auth::user()->id, 
+            'action' => 3, 
+            'section' => "Tickets", 
+            'row_affected' => $ticket, 
+            'description' => "Ticket eliminado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
+            'date' => Now()
+          ]);
+        return redirect()->route('home')->withFlash('Ticket Eliminado');
+
     }
 
     //  comentar un ticket
     public function commit(Request $request){
+        
         try{
 
             $request->validate([
                 'id_ticket' => ['required'],
-                'commit_user' => ['required']
+                'commit_user' => ['required'],
+                'status_ticket' => ['required']
             ]);
 
             //  create ticket commit
@@ -306,6 +368,22 @@ class TicketController extends Controller
 
             $ticket = Ticket::find($request->id_ticket);
 
+            if($ticket->status_id != $request->status_ticket){
+                $beforeTicket = $ticket->status->name;
+                
+                $ticket->status_id = $request->status_ticket;
+                $ticket->save();
+               //  activity log
+                activity_log::create([
+                    'user' => Auth::user()->id, 
+                    'action' => 6, 
+                    'section' => "Tickets", 
+                    'row_affected' => $ticket->id, 
+                    'description' => Auth::user()->user_data->names." ".Auth::user()->user_data->last_name." cambio el estatus del ticket de ".$beforeTicket." a ".$ticket->status->name, 
+                    'date' => Now()
+                ]); 
+            }
+
             $username = Auth::user()->user_data->names.' '.Auth::user()->user_data->last_name;
 
             //  send email to users
@@ -327,6 +405,15 @@ class TicketController extends Controller
                 Mail::to($employee->email)->send(new NewTicketAssigned($details));
             }
 
+            //  activity log
+            activity_log::create([
+                'user' => Auth::user()->id, 
+                'action' => 5, 
+                'section' => "Tickets", 
+                'row_affected' => $request->id_ticket, 
+                'description' => "Ticket comentado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
+                'date' => Now()
+            ]);
             return redirect()->route('home')->withFlash('Ticket Comentado.');
 
         }catch(ValidationException $e){

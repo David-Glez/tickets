@@ -36,12 +36,12 @@
               <td>
                 
                 @can('user.show')
-                <a href = '#' class = 'btn btn-xs btn-primary' onclick="return alert('En construccion')">
+                <a href = "{{route('see-user', $user['id'])}}" class = 'btn btn-xs btn-primary' >
                   <img src="/icons/v.png" width="10" height="10"> Ver
                 </a>
                 @endcan
                 @can('user.edit')
-                <a href="" class="btn btn-xs btn-info">
+                <a href="{{route('user-modify', $user['id'])}}" class="btn btn-xs btn-info">
                   <img src="/icons/e.png" width="10" height="10"> Editar
                 </a>
                 @endcan

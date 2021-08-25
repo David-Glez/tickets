@@ -37,6 +37,9 @@ class UserSeeder extends Seeder
         Permission::create(['name' => 'user.show']);
         Permission::create(['name' => 'user.destroy']);
 
+        //  Logs section
+        Permission::create(['name' => 'logs.show']);
+        
         //  create roles and assign created permissions
         //  super user with all permissions
         $sa = Role::create(['name' => 'root']);
