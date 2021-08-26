@@ -76,8 +76,20 @@ class HomeController extends Controller
     }
 
     public function logs(Request $request){
+      $list = [];
+      $isRoot = Auth::user()->hasRole('root');
+      if($isRoot){
+        $activity = activity_log::all();
+      }else{
+        $users = User::where('project', Auth::user()->project)->get();
 
-      $activity = activity_log::all();
+        foreach($users as $user){
+          array_push($list, $user->id);
+        }
+
+        $activity = activity_log::whereIn('user', $list)->get();
+      }
+      
       return view('logs.index', compact('activity'));
     }
 

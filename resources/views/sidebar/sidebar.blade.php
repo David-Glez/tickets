@@ -8,7 +8,7 @@
                 <span><i class="fas fa-angle-right float-right"></i></span>
             </a>
         </li>
-        @can('log.show')
+        @can('logs.show')
         <li class="w-full h-full py-3 px-2 border-b border-light-border">
             <a href="{{route('activity')}}"
                 class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">

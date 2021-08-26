@@ -57,7 +57,8 @@ class UserSeeder extends Seeder
             'user.edit',
             'user.create',
             'user.show',
-            'user.destroy'
+            'user.destroy',
+            'logs.show'
         ]);
 
         //  soporte user
