@@ -85,6 +85,7 @@ class UserSeeder extends Seeder
         //  cliente
         $cliente = Role::create(['name' => 'usuario']);
         $cliente->givePermissionTo([
+            'ticket.create',
             'ticket.take',
             'ticket.show',
             'ticket.commit'
@@ -97,6 +98,7 @@ class UserSeeder extends Seeder
             'project' => 0,
             'email' => 'root@root',
             'password' => bcrypt('root'),
+            'status' => true,
             'email_verified_at' => Now()
         ]);
         $root->assignRole($sa);
@@ -107,6 +109,7 @@ class UserSeeder extends Seeder
             'project' => 1,
             //'role_id' => '1',
             'password' => bcrypt('1'),
+            'status' => true,
             'email_verified_at' => Now()
         ]);
         $user1->assignRole($admin);
@@ -117,6 +120,7 @@ class UserSeeder extends Seeder
             'email' => '2@2',
             //'role_id' => '2',
             'password' => bcrypt('2'),
+            'status' => true,
             'email_verified_at' => Now()
         ]);
         $user2->assignRole($soporte);
@@ -128,6 +132,7 @@ class UserSeeder extends Seeder
             'project' => 2,
             //'role_id' => '3',
             'password' => bcrypt('3'),
+            'status' => true,
             'email_verified_at' => Now()
         ]);
         $user3->assignRole($externo);
@@ -138,6 +143,7 @@ class UserSeeder extends Seeder
             'project' => 2,
             //'role_id' => '3',
             'password' => bcrypt('4'),
+            'status' => true,
             'email_verified_at' => Now()
         ]);
         $user4->assignRole($cliente);

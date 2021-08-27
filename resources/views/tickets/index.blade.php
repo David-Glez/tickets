@@ -53,7 +53,7 @@
                   <form method="POST" action="{{route('destroy-ticket', $ticket['id'])}}" style="display: inline">
                     {{csrf_field()}} {{method_field('DELETE')}}
                     <button class="btn btn-xs btn-danger" onclick="return confirm('¿Está seguro de querer eliminar?')">
-                      <img src="/icons/x.png" width="10" height="10"> Rechazar
+                      <img src="/icons/x.png" width="10" height="10"> Eliminar
                     </button>
                   </form>
                   @endif

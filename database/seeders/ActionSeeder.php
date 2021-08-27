@@ -36,5 +36,8 @@ class ActionSeeder extends Seeder
         actions::create([
             'name' => 'Rechazar'
         ]);
+        actions::create([
+            'name' => 'Desactivar'
+        ]);
     }
 }

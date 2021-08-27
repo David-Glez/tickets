@@ -20,6 +20,7 @@
               <th>Departamento</th>
               <th>Proyecto</th>
               <th>Rol</th>
+              <th>Estatus</th>
               <th>E-mail</th>
               <th>Acciones</th>
             </tr>
@@ -32,6 +33,13 @@
               <td>{{$user['departamento']}}</td>
               <td>{{$user['proyecto']}}</td>
               <td>{{$user['roles']}}</td>
+              <td>
+                @if($user['status'] == true)
+                <span class="badge bg-success rounded">Activo</span>
+                @else
+                <span class="badge bg-danger rounded">Inactivo</span>
+                @endif
+              </td>
               <td>{{$user['email']}}</td>
               <td>
                 

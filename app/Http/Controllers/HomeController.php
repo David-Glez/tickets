@@ -102,6 +102,7 @@ class HomeController extends Controller
         $tickets = Ticket::where('status_id', '1')->get();
         foreach($tickets as $ticket){
           $user = User::find($ticket->solicitante);
+          
           $department = Departments::find($user->user_data->department);
   
           $applicant = $user->user_data->names.' '.$user->user_data->last_name;

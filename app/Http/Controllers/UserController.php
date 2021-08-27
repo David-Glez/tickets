@@ -12,6 +12,7 @@ use App\Employees;
 use App\Projects;
 use App\User_Ticket;
 use App\activity_log;
+use App\Ticket;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -37,16 +38,13 @@ class UserController extends Controller
 
     public function login(Request $request){
 
-
-      $credentials = $request->only('email', 'password');
-
-      $validation = Auth::attempt($credentials);
+      $validation = Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => true]);
 
       if($validation){
         return redirect()->route('home');
       }else{
         return redirect()->back()->withErrors([
-          'errors' => 'usuario o contraseña incorrectas'
+          'errors' => 'usuario / contraseña incorrectas o usuario inactivo'
         ]);
       }
     }
@@ -80,6 +78,7 @@ class UserController extends Controller
             'nombre' => $user->user_data->names.' '.$user->user_data->last_names,
             'departamento' => $department->name,
             'proyecto' => $project->empresa,
+            'status' => $user->status,
             'roles' => $user->roles->pluck('name'),
             'email' => $user->email
           );
@@ -101,6 +100,7 @@ class UserController extends Controller
             'nombre' => $user->user_data->names.' '.$user->user_data->last_names,
             'departamento' => $department->name,
             'proyecto' => $project->empresa,
+            'status' => $user->status,
             'roles' => $user->roles->pluck('name'),
             'email' => $user->email
           );
@@ -136,6 +136,7 @@ class UserController extends Controller
           'email' => $request->email,
           'password' => bcrypt($request->password),
           'email_verified_at' => Now(),
+          'status' => true,
           'project' => $request->empresa
         ]);
 
@@ -262,25 +263,48 @@ class UserController extends Controller
      */
     public function destroy($user)
     {
-        //  delete user tickets
-        User_Ticket::where('user_id', $user)->delete();
+        $usuario = User::find($user);
+        //  check if user requested a ticket
+        $tickets = Ticket::where('solicitante', $user)->count();
+
+        //  If user has at least one ticket, only changes status from true to false
+        if($tickets > 0){
+          $usuario->status = false;
+          $usuario->save();
+
+          //  activity log
+          activity_log::create([
+            'user' => Auth::user()->id, 
+            'action' => 8, 
+            'section' => "Usuarios", 
+            'row_affected' => $user, 
+            'description' => "Usuario desactivado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name.". El usuario tiene tickets solicitados. " , 
+            'date' => Now()
+          ]);
+
+          return redirect()->route('home')->withFlash('Usuario Desactivado. TIene tickets solicitados.');
+        }else{
+          //  delete user tickets
+          User_Ticket::where('user_id', $user)->delete();
+                  
+          //  delete user data
+          Employees::where('user_id', $user)->delete();
+
+          //  delete user credentials
+          $usuario->delete();
+
+          //  activity log
+          activity_log::create([
+            'user' => Auth::user()->id, 
+            'action' => 3, 
+            'section' => "Usuarios", 
+            'row_affected' => $user, 
+            'description' => "Usuario eliminado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
+            'date' => Now()
+          ]);
+
+          return redirect()->route('home')->withFlash('Usuario Eliminado');
+        }
         
-        //  delete user data
-        Employees::where('user_id', $user)->delete();
-
-        //  delete user credentials
-        User::find($user)->delete();
-
-        //  activity log
-        activity_log::create([
-          'user' => Auth::user()->id, 
-          'action' => 3, 
-          'section' => "Usuarios", 
-          'row_affected' => $user, 
-          'description' => "Usuario eliminado por ".Auth::user()->user_data->names." ".Auth::user()->user_data->last_name , 
-          'date' => Now()
-        ]);
-
-        return redirect()->route('home')->withFlash('Usuario Eliminado');
     }
 }
