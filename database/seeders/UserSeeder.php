@@ -86,7 +86,6 @@ class UserSeeder extends Seeder
         $cliente = Role::create(['name' => 'usuario']);
         $cliente->givePermissionTo([
             'ticket.create',
-            'ticket.take',
             'ticket.show',
             'ticket.commit'
         ]);
