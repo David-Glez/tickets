@@ -136,8 +136,8 @@ class UserController extends Controller
           'email' => $request->email,
           'password' => bcrypt($request->password),
           'email_verified_at' => Now(),
-          'status' => true,
-          'project' => $request->empresa
+          'project' => $request->empresa,
+          'status' => true
         ]);
 
         //  assign role and permissions
