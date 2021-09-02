@@ -98,6 +98,8 @@ class HomeController extends Controller
 
       $ticket_info = [];
 
+      $this->verify_tickets();
+
       if(Auth::user()->hasRole('root')){
         $tickets = Ticket::where('status_id', '1')->get();
         foreach($tickets as $ticket){
@@ -149,6 +151,25 @@ class HomeController extends Controller
 
       return view('tickets.index', compact('ticket_info'));
 
+    }
+
+    public function verify_tickets(){
+      $tickets_taken = [];
+      $taken = User_Ticket::distinct('ticket_id')->get();
+
+      foreach($taken as $ticket){
+        array_push($tickets_taken, $ticket->ticket_id);
+      }
+
+      $tickets = Ticket::whereNotIn('id', $tickets_taken)->get();
+      
+      if(!$tickets->isEmpty()){
+        
+        foreach($tickets as $ticket){
+          $ticket->status_id = 1;
+          $ticket->save();
+        }
+      }
     }
 
 

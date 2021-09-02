@@ -92,15 +92,6 @@ class TicketController extends Controller
 
             $commit_details[] = $data;
         }
-        // }else{
-        //     $data = array(
-        //         'id' => 0,
-        //         'user' => '0',
-        //         'commit' => 'No hay comentarios',
-        //         'date' => Now()
-        //     );
-        //     $commit_details[] = $data;
-        // }
 
         return view('tickets.ticket')->with([
             'ticket' => $ticket,
